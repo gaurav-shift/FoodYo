@@ -1,11 +1,12 @@
-package com.example.foodyo.navigation
+package com.example.foodyo.Navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.foodyo.presentation.splash.SplashScreen
-import androidx.compose.material3.Text
+import com.example.foodyo.Presentation.AuthUI.LoginScreen
+import com.example.foodyo.Presentation.AuthUI.SignUpScreen
+import com.example.foodyo.Presentation.Splash.SplashScreen
 
 @Composable
 fun AppNavigator() {
@@ -14,29 +15,36 @@ fun AppNavigator() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.Splash
+        startDestination = routes.Splash
     ) {
 
-        composable<Routes.Splash> {
+        composable<routes.Splash> {
             SplashScreen(
                 onNavigateToLogin = {
-                    navController.navigate(Routes.Login) {
-                        popUpTo(Routes.Splash) { inclusive = true }
+                    navController.navigate(routes.Login) {
+                        popUpTo(routes.Splash) { inclusive = true }
+                    }
+                },
+                onNavigateToHome = {
+                    navController.navigate(routes.Home) {
+                        popUpTo(routes.Splash) { inclusive = true }
                     }
                 }
             )
         }
 
-        composable<Routes.Login> {
-            Text("Login Screen")
-            // LoginScreen()
+        composable<routes.Login> {
+
+             LoginScreen(
+                navController = navController
+             )
         }
 
-        composable<Routes.Signup> {
-            // SignupScreen()
+        composable<routes.Signup> {
+            SignUpScreen(navController)
         }
 
-        composable<Routes.Home> {
+        composable<routes.Home> {
             // HomeScreen()
         }
     }

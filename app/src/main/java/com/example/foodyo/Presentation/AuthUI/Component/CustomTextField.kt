@@ -1,6 +1,5 @@
 package com.example.foodyo.Presentation.AuthUI.Component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField

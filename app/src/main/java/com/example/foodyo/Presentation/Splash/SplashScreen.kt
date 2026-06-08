@@ -1,4 +1,4 @@
-package com.example.foodyo.presentation.splash
+package com.example.foodyo.Presentation.Splash
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -23,19 +24,35 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.foodyo.Presentation.AuthUI.AuthViewModel
 import com.example.foodyo.R
 import com.example.foodyo.ui.theme.OrangeEnd
 import com.example.foodyo.ui.theme.OrangeStart
 import kotlinx.coroutines.delay
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 
 @Composable
 fun SplashScreen(
-    onNavigateToLogin: () -> Unit = {}
+    onNavigateToLogin: () -> Unit,
+    onNavigateToHome: () -> Unit,
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
 
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+
     LaunchedEffect(Unit) {
+        viewModel.checkUserSession()
         delay(2000)
-        onNavigateToLogin()
+    }
+
+    LaunchedEffect(isLoggedIn) {
+        when(isLoggedIn){
+            true -> onNavigateToHome()
+            false -> onNavigateToLogin()
+            null -> {}
+        }
     }
 
     Column(

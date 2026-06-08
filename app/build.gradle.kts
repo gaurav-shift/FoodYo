@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     alias(libs.plugins.kotlin.serialization)
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
 
 android {
@@ -63,4 +65,23 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.kotlinx.serialization.json)
+
+    // ktor (for Kotlin 2.0.21)
+    implementation("io.ktor:ktor-client-core:3.2.1")
+    implementation("io.ktor:ktor-client-cio:3.2.1")
+    implementation("io.ktor:ktor-client-content-negotiation:3.2.1")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.1")
+    implementation("io.ktor:ktor-client-logging:3.2.1")
+
+    // Coil for Jetpack Compose
+    implementation("io.coil-kt:coil-compose:2.7.0")
+
+    implementation("com.google.dagger:hilt-android:2.56.2")
+    kapt("com.google.dagger:hilt-compiler:2.56.2")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+}
+kapt {
+    correctErrorTypes = true
 }
