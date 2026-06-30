@@ -10,6 +10,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import android.content.Context
+import com.example.foodyo.dataLayer.repositoryImpl.AddressRepositoryImpl
+import com.example.foodyo.dataLayer.services.AddressApiService
+import com.example.foodyo.domainLayer.repository.AddressRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module
@@ -35,4 +38,21 @@ object NetworkModule {
     ) : TokenManager{
         return TokenManager(context)
     }
+
+    @Provides
+    @Singleton
+    fun provideAddressApiService(
+        tokenManager: TokenManager
+    ): AddressApiService {
+        return AddressApiService(tokenManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAddressRepository(
+        addressApiService: AddressApiService
+    ): AddressRepository {
+        return AddressRepositoryImpl(addressApiService)
+    }
+
 }

@@ -57,6 +57,11 @@ class AuthViewModel @Inject constructor(
         _authState.value = Results.Loading
         viewModelScope.launch(Dispatchers.IO) {
             val result = signUpUseCase(name, email, password)
+            if(
+                result is Results.Success && result.data.data?.token != null
+            ){
+                tokenManager.saveToken(result.data.data!!.token)
+            }
             _authState.value = result
         }
     }

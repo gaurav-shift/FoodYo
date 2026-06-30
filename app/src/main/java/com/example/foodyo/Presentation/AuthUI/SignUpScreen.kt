@@ -74,7 +74,7 @@ fun SignUpScreen(
             is Results.Success ->{
                 isLoading=false
                 Toast.makeText(context,"Account created successfully",Toast.LENGTH_SHORT).show()
-                navController.navigate(routes.Login){
+                navController.navigate(routes.CreateAddress){
                     popUpTo(routes.Signup){inclusive =true}
                 }
                 viewModel.resetAuthState()

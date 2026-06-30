@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class SignUpResponseDto(
     val success: Boolean,
     val message: String,
-    val data: UserDto? = null,
+    val data: SignInDataDto? = null,
     val error: ErrorDto? = null
 )
