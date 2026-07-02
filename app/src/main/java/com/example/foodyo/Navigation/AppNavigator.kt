@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.foodyo.Presentation.AddressUI.CreateAddressScreen
 import com.example.foodyo.Presentation.AuthUI.LoginScreen
 import com.example.foodyo.Presentation.AuthUI.SignUpScreen
+import com.example.foodyo.Presentation.HomeUI.HomeScreen
 import com.example.foodyo.Presentation.Splash.SplashScreen
 
 @Composable
@@ -46,7 +47,9 @@ fun AppNavigator() {
         }
 
         composable<routes.Home> {
-            // HomeScreen()
+            HomeScreen(
+                navController = navController
+            )
         }
         composable<routes.CreateAddress> {
             CreateAddressScreen(

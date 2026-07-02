@@ -11,8 +11,11 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import android.content.Context
 import com.example.foodyo.dataLayer.repositoryImpl.AddressRepositoryImpl
+import com.example.foodyo.dataLayer.repositoryImpl.RestaurantRepositoryImpl
 import com.example.foodyo.dataLayer.services.AddressApiService
+import com.example.foodyo.dataLayer.services.RestaurantApiService
 import com.example.foodyo.domainLayer.repository.AddressRepository
+import com.example.foodyo.domainLayer.repository.RestaurantRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module
@@ -54,5 +57,23 @@ object NetworkModule {
     ): AddressRepository {
         return AddressRepositoryImpl(addressApiService)
     }
+
+    @Provides
+    @Singleton
+    fun provideRestaurantApiService(
+        tokenManager: TokenManager
+    ): RestaurantApiService {
+        return RestaurantApiService(tokenManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRestaurantRepository(
+        restaurantApiService: RestaurantApiService
+    ): RestaurantRepository {
+        return RestaurantRepositoryImpl(restaurantApiService)
+    }
+
+
 
 }
