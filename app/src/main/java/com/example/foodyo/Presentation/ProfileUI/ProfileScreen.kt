@@ -38,6 +38,7 @@ import com.example.foodyo.Navigation.routes
 import com.example.foodyo.Presentation.AddressUI.DeleteAddressViewModel
 import com.example.foodyo.dataLayer.remote.dto.address.AddressDto
 import androidx.compose.runtime.setValue
+import com.example.foodyo.Presentation.AddressUI.UpdateAddressViewModel
 
 @Composable
 fun ProfileScreen(
@@ -52,6 +53,9 @@ fun ProfileScreen(
     val deleteViewModel: DeleteAddressViewModel = hiltViewModel()
     val deleteState by deleteViewModel.deleteAddressState.collectAsState()
 
+    val updateViewModel: UpdateAddressViewModel = hiltViewModel()
+    val updateState by updateViewModel.updateAddressState.collectAsState()
+
     var showDeleteDialog by remember {
         mutableStateOf(false)
     }
@@ -62,6 +66,40 @@ fun ProfileScreen(
 
     LaunchedEffect(Unit) {
         viewModel.loadProfile()
+    }
+
+    LaunchedEffect(updateState){
+
+        when(val state = updateState){
+
+            is Results.Success -> {
+
+                Toast.makeText(
+                    context,
+                    state.data.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                updateViewModel.resetUpdateAddressState()
+
+                viewModel.loadProfile()
+
+            }
+
+            is Results.Failure -> {
+
+                Toast.makeText(
+                    context,
+                    state.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                updateViewModel.resetUpdateAddressState()
+            }
+
+            else -> {}
+        }
+
     }
 
     LaunchedEffect(deleteState) {
@@ -93,6 +131,8 @@ fun ProfileScreen(
                     state.message,
                     Toast.LENGTH_SHORT
                 ).show()
+
+                deleteViewModel.resetDeleteAddressState()
 
             }
 
@@ -194,7 +234,7 @@ fun ProfileScreen(
                                         showDeleteDialog = true
                                     },
                                     onMakeDefault = {
-
+                                        updateViewModel.makeDefault(it)
                                     }
                                 )
 
