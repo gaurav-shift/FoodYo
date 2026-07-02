@@ -1,5 +1,6 @@
 package com.example.foodyo.domainLayer.repository
 
+import com.example.foodyo.dataLayer.remote.dto.auth.GetCurrentUserResponseDto
 import com.example.foodyo.dataLayer.remote.dto.auth.SignInRequestDto
 import com.example.foodyo.dataLayer.remote.dto.auth.SignInResponseDto
 import com.example.foodyo.dataLayer.remote.dto.auth.SignUpRequestDto
@@ -15,6 +16,9 @@ interface AuthRepository {
     suspend fun signUp(
         request: SignUpRequestDto
     ): Results<SignUpResponseDto>
+
+    suspend fun getCurrentUser():
+            Results<GetCurrentUserResponseDto>
 
     fun isUserLoggedIn() : Boolean
 

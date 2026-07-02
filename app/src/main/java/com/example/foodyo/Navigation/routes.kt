@@ -19,4 +19,12 @@ sealed interface routes {
 
     @Serializable
     data object CreateAddress
+
+    @Serializable
+    data object Profile : routes
+
+    @Serializable
+    data class UpdateAddress(
+        val addressId: String
+    ) : routes
 }

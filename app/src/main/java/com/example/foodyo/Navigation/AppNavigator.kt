@@ -1,14 +1,17 @@
 package com.example.foodyo.Navigation
 
+import ProfileScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.foodyo.Presentation.AddressUI.CreateAddressScreen
+import com.example.foodyo.Presentation.AddressUI.UpdateAddressScreen
 import com.example.foodyo.Presentation.AuthUI.LoginScreen
 import com.example.foodyo.Presentation.AuthUI.SignUpScreen
 import com.example.foodyo.Presentation.HomeUI.HomeScreen
 import com.example.foodyo.Presentation.Splash.SplashScreen
+import com.example.foodyo.dataLayer.remote.dto.address.AddressDto
 
 @Composable
 fun AppNavigator() {
@@ -56,5 +59,28 @@ fun AppNavigator() {
                 navController = navController
             )
         }
+
+        composable<routes.Profile> {
+            ProfileScreen(
+                navController = navController
+            )
+        }
+
+        composable<routes.UpdateAddress> {
+
+            val address =
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.get<AddressDto>("address")
+
+            if (address != null) {
+                UpdateAddressScreen(
+                    address = address,
+                    navController = navController
+                )
+            }
+
+        }
+
     }
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.foodyo.Navigation.routes
 import com.example.foodyo.Presentation.HomeUI.Components.BottomNavigationBar
 import com.example.foodyo.Presentation.HomeUI.Components.HomeTopBar
 import com.example.foodyo.Presentation.HomeUI.Components.RestaurantCard
@@ -53,8 +54,20 @@ fun HomeScreen(
         bottomBar = {
             BottomNavigationBar(
                 selectedIndex = selectedIndex,
-                onItemClick = {
-                    selectedIndex = it
+                onItemClick = { index->
+                    selectedIndex = index
+
+                    when(index){
+
+                        0 -> navController.navigate(routes.Home)
+
+                     //   1 -> navController.navigate(routes.Orders)
+
+                     //   2 -> navController.navigate(routes.Cart)
+
+                        3 -> navController.navigate(routes.Profile)
+
+                    }
                 }
             )
         }

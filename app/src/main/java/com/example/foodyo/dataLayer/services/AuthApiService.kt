@@ -1,15 +1,22 @@
 package com.example.foodyo.dataLayer.services
 
+import com.example.foodyo.dataLayer.local.TokenManager
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.header
+import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
-class AuthApiService {
+class AuthApiService (
+    private val tokenManager: TokenManager
+){
      val client = HttpClient(CIO){
         install(ContentNegotiation){
             json(Json{
@@ -29,7 +36,21 @@ class AuthApiService {
                 host = "10.0.2.2"
                 port = 5001
             }
+            runBlocking {
+
+                tokenManager.getToken().first()?.let { token ->
+
+                    header(
+                        HttpHeaders.Authorization,
+                        "Bearer $token"
+                    )
+
+                }
+
+            }
         }
+
     }
+
 
 }

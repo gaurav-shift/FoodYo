@@ -1,5 +1,6 @@
 package com.example.foodyo.Presentation.AddressUI
 
+import android.R.attr.label
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,31 +39,34 @@ import com.example.foodyo.Presentation.AddressUI.Component.AddressHeader
 import com.example.foodyo.Presentation.AddressUI.Component.AddressLabelSelector
 import com.example.foodyo.Presentation.AuthUI.Component.CustomTextField
 import com.example.foodyo.R
+import com.example.foodyo.dataLayer.remote.dto.address.AddressDto
 import com.example.foodyo.domainLayer.util.Results
 import com.example.foodyo.ui.theme.OrangeStart
 
 @Composable
-fun CreateAddressScreen(
-    viewModel: CreateAddressViewModel = hiltViewModel(),
+fun UpdateAddressScreen(
+    address: AddressDto,
+    viewModel: UpdateAddressViewModel = hiltViewModel(),
     navController: NavController
 ){
 
-    var receiverName by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var selectedLabel by remember { mutableStateOf("Home") }
-    var addressLine1 by remember { mutableStateOf("") }
-    var addressLine2 by remember { mutableStateOf("") }
-    var city by remember { mutableStateOf("") }
-    var state by remember { mutableStateOf("") }
-    var pincode by remember { mutableStateOf("") }
+    var receiverName by remember { mutableStateOf(address.receiverName) }
+    var phone by remember { mutableStateOf(address.phone) }
+    var selectedLabel by remember { mutableStateOf(address.label) }
+    var addressLine1 by remember { mutableStateOf(address.addressLine1) }
+    var addressLine2 by remember { mutableStateOf(address.addressLine2) }
+    var city by remember { mutableStateOf(address.city) }
+    var state by remember { mutableStateOf(address.state) }
+    var pincode by remember { mutableStateOf(address.pincode) }
     var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    val createAddressState by viewModel.createAddressState.collectAsState()
+    // CHANGED
+    val updateAddressState by viewModel.updateAddressState.collectAsState()
 
-    LaunchedEffect(createAddressState){
+    LaunchedEffect(updateAddressState){
 
-        when(val state = createAddressState){
+        when(val state = updateAddressState){
 
             is Results.Idle -> {}
             is Results.Loading -> {
@@ -76,13 +80,8 @@ fun CreateAddressScreen(
                     Toast.LENGTH_SHORT
                 ).show()
 
-                navController.navigate(routes.Home){
-                    popUpTo(routes.CreateAddress){
-                        inclusive = true
-                    }
-                }
-
-                viewModel.resetCreateAddressState()
+                viewModel.resetUpdateAddressState()
+                navController.popBackStack()
             }
 
             is Results.Failure -> {
@@ -110,7 +109,7 @@ fun CreateAddressScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
 
 
-        ) {
+            ) {
             AddressHeader()
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -215,7 +214,8 @@ fun CreateAddressScreen(
                             pincode.isNotBlank()
                         ) {
 
-                            viewModel.createAddress(
+                            viewModel.updateAddress(
+                                id = address.id,
                                 label = selectedLabel,
                                 receiverName = receiverName,
                                 phone = phone,
@@ -223,7 +223,8 @@ fun CreateAddressScreen(
                                 addressLine2 = addressLine2,
                                 city = city,
                                 state = state,
-                                pincode = pincode
+                                pincode = pincode,
+                                isDefault = address.isDefault
                             )
 
                         } else {
@@ -245,7 +246,7 @@ fun CreateAddressScreen(
                     )
                 }else{
                     Text(
-                        text = "Save Address",
+                        text = "Update Address",
                         fontSize = 24.sp,
                         color = Color.White,
                         fontWeight = FontWeight.Medium,

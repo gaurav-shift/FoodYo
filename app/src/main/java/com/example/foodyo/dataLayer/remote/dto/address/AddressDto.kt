@@ -1,7 +1,10 @@
 package com.example.foodyo.dataLayer.remote.dto.address
 
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import android.os.Parcelable
 
+@Parcelize
 @Serializable
 data class AddressDto(
     val id: String,
@@ -14,4 +17,4 @@ data class AddressDto(
     val state: String,
     val pincode: String,
     val isDefault: Boolean
-)
+): Parcelable

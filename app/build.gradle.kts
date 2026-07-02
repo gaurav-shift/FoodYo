@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     id("com.google.dagger.hilt.android")
     kotlin("kapt")
+    id("kotlin-parcelize")
 }
 
 android {
