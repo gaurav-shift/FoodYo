@@ -5,11 +5,13 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.foodyo.Presentation.AddressUI.CreateAddressScreen
 import com.example.foodyo.Presentation.AddressUI.UpdateAddressScreen
 import com.example.foodyo.Presentation.AuthUI.LoginScreen
 import com.example.foodyo.Presentation.AuthUI.SignUpScreen
 import com.example.foodyo.Presentation.HomeUI.HomeScreen
+import com.example.foodyo.Presentation.MenuUI.RestaurantDetailsScreen
 import com.example.foodyo.Presentation.Splash.SplashScreen
 import com.example.foodyo.dataLayer.remote.dto.address.AddressDto
 
@@ -80,6 +82,16 @@ fun AppNavigator() {
                 )
             }
 
+        }
+
+        composable<routes.RestaurantDetails> { backStackEntry ->
+
+            val route = backStackEntry.toRoute<routes.RestaurantDetails>()
+
+            RestaurantDetailsScreen(
+                restaurantId = route.restaurantId,
+                navController = navController
+            )
         }
 
     }

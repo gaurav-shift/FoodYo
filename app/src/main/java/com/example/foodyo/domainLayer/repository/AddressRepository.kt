@@ -1,5 +1,6 @@
 package com.example.foodyo.domainLayer.repository
 
+import com.example.foodyo.dataLayer.remote.dto.address.AddressResponseDto
 import com.example.foodyo.dataLayer.remote.dto.address.CreateAddressRequestDto
 import com.example.foodyo.dataLayer.remote.dto.address.CreateAddressResponseDto
 import com.example.foodyo.dataLayer.remote.dto.address.DeleteAddressResponseDto
@@ -16,6 +17,10 @@ interface AddressRepository {
 
     suspend fun getAddresses():
             Results<GetAddressesResponseDto>
+
+    suspend fun getAddressById(
+        id: String
+    ): Results<AddressResponseDto>
 
     suspend fun updateAddress(
         addressId: String,

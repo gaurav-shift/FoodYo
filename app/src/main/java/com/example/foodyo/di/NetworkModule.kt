@@ -1,15 +1,19 @@
 package com.example.foodyo.di
 
+
 import android.content.Context
 import com.example.foodyo.dataLayer.local.TokenManager
 import com.example.foodyo.dataLayer.repositoryImpl.AddressRepositoryImpl
 import com.example.foodyo.dataLayer.repositoryImpl.AuthRepositoryImpl
+import com.example.foodyo.dataLayer.repositoryImpl.MenuRepositoryImpl
 import com.example.foodyo.dataLayer.repositoryImpl.RestaurantRepositoryImpl
 import com.example.foodyo.dataLayer.services.AddressApiService
 import com.example.foodyo.dataLayer.services.AuthApiService
+import com.example.foodyo.dataLayer.services.MenuApiService
 import com.example.foodyo.dataLayer.services.RestaurantApiService
 import com.example.foodyo.domainLayer.repository.AddressRepository
 import com.example.foodyo.domainLayer.repository.AuthRepository
+import com.example.foodyo.domainLayer.repository.MenuRepository
 import com.example.foodyo.domainLayer.repository.RestaurantRepository
 import dagger.Module
 import dagger.Provides
@@ -74,6 +78,24 @@ object NetworkModule {
         restaurantApiService: RestaurantApiService
     ): RestaurantRepository {
         return RestaurantRepositoryImpl(restaurantApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMenuApiService(
+        tokenManager: TokenManager
+    ): MenuApiService {
+
+        return MenuApiService(tokenManager)
+
+    }
+
+    @Provides
+    @Singleton
+    fun provideMenuRepository(
+        menuApiService: MenuApiService
+    ): MenuRepository {
+        return MenuRepositoryImpl(menuApiService)
     }
 
 

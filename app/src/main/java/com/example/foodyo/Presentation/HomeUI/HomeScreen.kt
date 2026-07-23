@@ -148,7 +148,11 @@ fun HomeScreen(
                                 RestaurantCard(
                                     restaurant = restaurant,
                                     onClick = {
-                                        // TODO Restaurant Details
+                                        navController.navigate(
+                                            routes.RestaurantDetails(
+                                                restaurant.id
+                                            )
+                                        )
                                     }
                                 )
 

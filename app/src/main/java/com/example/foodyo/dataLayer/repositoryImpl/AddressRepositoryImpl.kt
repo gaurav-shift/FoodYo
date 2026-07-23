@@ -1,6 +1,7 @@
 package com.example.foodyo.dataLayer.repositoryImpl
 
 import android.util.Log
+import com.example.foodyo.dataLayer.remote.dto.address.AddressResponseDto
 import com.example.foodyo.dataLayer.remote.dto.address.CreateAddressRequestDto
 import com.example.foodyo.dataLayer.remote.dto.address.CreateAddressResponseDto
 import com.example.foodyo.dataLayer.remote.dto.address.DeleteAddressResponseDto
@@ -13,7 +14,6 @@ import com.example.foodyo.domainLayer.util.Results
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
-import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -76,6 +76,38 @@ class AddressRepositoryImpl(
                 e.message ?: "Something went wrong"
             )
         }
+    }
+
+    override suspend fun getAddressById(
+        id: String
+    ): Results<AddressResponseDto> {
+
+        return try {
+
+            val response = addressApiService.client
+                .get("/api/v1/addresses/$id")
+                .body<AddressResponseDto>()
+
+            if (response.success) {
+
+                Results.Success(response)
+
+            } else {
+
+                Results.Failure(
+                    response.message
+                )
+
+            }
+
+        } catch (e: Exception) {
+
+            Results.Failure(
+                e.message ?: "Something went wrong"
+            )
+
+        }
+
     }
 
     override suspend fun updateAddress(

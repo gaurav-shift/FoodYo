@@ -1,5 +1,6 @@
 package com.example.foodyo.Navigation
 
+import com.example.foodyo.dataLayer.remote.dto.restaurant.RestaurantDto
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,7 +19,7 @@ sealed interface routes {
     data object Signup : routes
 
     @Serializable
-    data object CreateAddress
+    data object CreateAddress : routes
 
     @Serializable
     data object Profile : routes
@@ -26,5 +27,10 @@ sealed interface routes {
     @Serializable
     data class UpdateAddress(
         val addressId: String
+    ) : routes
+
+    @Serializable
+    data class RestaurantDetails(
+        val restaurantId: String
     ) : routes
 }
