@@ -10,6 +10,7 @@ import com.example.foodyo.Presentation.AddressUI.CreateAddressScreen
 import com.example.foodyo.Presentation.AddressUI.UpdateAddressScreen
 import com.example.foodyo.Presentation.AuthUI.LoginScreen
 import com.example.foodyo.Presentation.AuthUI.SignUpScreen
+import com.example.foodyo.Presentation.CartUI.CartScreen
 import com.example.foodyo.Presentation.HomeUI.HomeScreen
 import com.example.foodyo.Presentation.MenuUI.RestaurantDetailsScreen
 import com.example.foodyo.Presentation.Splash.SplashScreen
@@ -91,6 +92,16 @@ fun AppNavigator() {
             RestaurantDetailsScreen(
                 restaurantId = route.restaurantId,
                 navController = navController
+            )
+        }
+        composable< routes.Cart> {
+            CartScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onCheckoutClick = {
+                    // TODO
+                }
             )
         }
 

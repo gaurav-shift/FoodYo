@@ -13,11 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.foodyo.Presentation.CartUI.CartViewModel
 import com.example.foodyo.Presentation.MenuUI.Components.MenuItemCard
 import com.example.foodyo.Presentation.MenuUI.Components.RestaurantHeader
 import com.example.foodyo.Presentation.MenuUI.Components.RestaurantInfo
@@ -29,15 +31,21 @@ fun RestaurantDetailsScreen(
     restaurantId: String,
     restaurantViewModel: RestaurantViewModel = hiltViewModel(),
     menuViewModel: MenuViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
     navController: NavController
 ) {
 
     val restaurantState by restaurantViewModel.restaurantState.collectAsState()
     val menuState by menuViewModel.menusState.collectAsState()
+    val cart by cartViewModel.cart.collectAsState()
+    val cartItemsMap = remember(cart) {
+        cart?.items?.associateBy { it.menuId } ?: emptyMap()
+    }
 
     LaunchedEffect(restaurantId) {
         restaurantViewModel.getRestaurantById(restaurantId)
         menuViewModel.getMenusByRestaurantId(restaurantId)
+        cartViewModel.getCart()
     }
 
     Scaffold { innerPadding ->
@@ -84,22 +92,19 @@ fun RestaurantDetailsScreen(
                         HorizontalDivider(
                             modifier = Modifier.padding(top = 16.dp)
                         )
+
                     }
+
                 }
-
                 is Results.Loading -> {
-
                     item {
                         Text(
                             text = "Loading...",
                             modifier = Modifier.padding(16.dp)
                         )
                     }
-
                 }
-
                 is Results.Failure -> {
-
                     item {
                         Text(
                             text = state.message,
@@ -107,44 +112,56 @@ fun RestaurantDetailsScreen(
                             modifier = Modifier.padding(16.dp)
                         )
                     }
-
                 }
-
                 else -> {}
             }
 
             when (val state = menuState) {
-
                 is Results.Success -> {
-
                     items(state.data.data ?: emptyList()) { menuItem ->
 
+                        val quantity =
+                            cartItemsMap[menuItem.id]?.quantity ?: 0
                         MenuItemCard(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             menuItem = menuItem,
-                            quantity = 0,
-                            onAddClick = {},
-                            onIncrement = {},
-                            onDecrement = {}
+                            quantity = quantity,
+                            onAddClick = {
+                                cartViewModel.addToCart(
+                                    menuItem.id
+                                )
+                            },
+                            onIncrement = {
+                                cartViewModel.updateCartItemQuantity(
+                                    menuId = menuItem.id,
+                                    quantity = quantity + 1
+                                )
+                            },
+
+                            onDecrement = {
+                                if (quantity == 1) {
+                                    cartViewModel.removeCartItem(
+                                        menuItem.id
+                                    )
+                                } else {
+                                    cartViewModel.updateCartItemQuantity(
+                                        menuId = menuItem.id,
+                                        quantity = quantity - 1
+                                    )
+                                }
+                            }
                         )
-
                     }
-
                 }
-
                 is Results.Loading -> {
-
                     item {
                         Text(
                             text = "Loading Menu...",
                             modifier = Modifier.padding(16.dp)
                         )
                     }
-
                 }
-
                 is Results.Failure -> {
-
                     item {
                         Text(
                             text = state.message,
@@ -152,15 +169,9 @@ fun RestaurantDetailsScreen(
                             modifier = Modifier.padding(16.dp)
                         )
                     }
-
                 }
-
                 else -> {}
-
             }
-
         }
-
     }
-
 }

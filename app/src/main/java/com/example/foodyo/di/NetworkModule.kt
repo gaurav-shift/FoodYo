@@ -5,14 +5,17 @@ import android.content.Context
 import com.example.foodyo.dataLayer.local.TokenManager
 import com.example.foodyo.dataLayer.repositoryImpl.AddressRepositoryImpl
 import com.example.foodyo.dataLayer.repositoryImpl.AuthRepositoryImpl
+import com.example.foodyo.dataLayer.repositoryImpl.CartRepositoryImpl
 import com.example.foodyo.dataLayer.repositoryImpl.MenuRepositoryImpl
 import com.example.foodyo.dataLayer.repositoryImpl.RestaurantRepositoryImpl
 import com.example.foodyo.dataLayer.services.AddressApiService
 import com.example.foodyo.dataLayer.services.AuthApiService
+import com.example.foodyo.dataLayer.services.CartApiService
 import com.example.foodyo.dataLayer.services.MenuApiService
 import com.example.foodyo.dataLayer.services.RestaurantApiService
 import com.example.foodyo.domainLayer.repository.AddressRepository
 import com.example.foodyo.domainLayer.repository.AuthRepository
+import com.example.foodyo.domainLayer.repository.CartRepository
 import com.example.foodyo.domainLayer.repository.MenuRepository
 import com.example.foodyo.domainLayer.repository.RestaurantRepository
 import dagger.Module
@@ -96,6 +99,26 @@ object NetworkModule {
         menuApiService: MenuApiService
     ): MenuRepository {
         return MenuRepositoryImpl(menuApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartApiService(
+        tokenManager: TokenManager
+    ): CartApiService {
+
+        return CartApiService(tokenManager)
+
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartRepository(
+        cartApiService: CartApiService
+    ): CartRepository {
+
+        return CartRepositoryImpl(cartApiService)
+
     }
 
 

@@ -63,7 +63,7 @@ fun HomeScreen(
 
                      //   1 -> navController.navigate(routes.Orders)
 
-                     //   2 -> navController.navigate(routes.Cart)
+                       2 -> navController.navigate(routes.Cart)
 
                         3 -> navController.navigate(routes.Profile)
 

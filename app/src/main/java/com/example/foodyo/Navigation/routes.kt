@@ -33,4 +33,7 @@ sealed interface routes {
     data class RestaurantDetails(
         val restaurantId: String
     ) : routes
+
+    @Serializable
+    data object Cart : routes
 }
