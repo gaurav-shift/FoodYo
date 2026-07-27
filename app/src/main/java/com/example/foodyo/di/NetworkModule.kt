@@ -18,6 +18,7 @@ import com.example.foodyo.domainLayer.repository.AuthRepository
 import com.example.foodyo.domainLayer.repository.CartRepository
 import com.example.foodyo.domainLayer.repository.MenuRepository
 import com.example.foodyo.domainLayer.repository.RestaurantRepository
+import com.example.foodyo.domainLayer.usecase.ClearCartUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -120,6 +121,11 @@ object NetworkModule {
         return CartRepositoryImpl(cartApiService)
 
     }
+
+    @Provides
+    fun provideClearCartUseCase(
+        repository: CartRepository
+    ) = ClearCartUseCase(repository)
 
 
 

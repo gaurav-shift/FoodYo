@@ -21,4 +21,6 @@ interface CartRepository {
         menuId: String
     ): Results<CartResponseDto>
 
+    suspend fun clearCart(): Results<CartResponseDto>
+
 }

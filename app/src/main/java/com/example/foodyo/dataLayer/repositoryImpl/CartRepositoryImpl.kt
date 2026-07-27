@@ -2,12 +2,14 @@ package com.example.foodyo.dataLayer.repositoryImpl
 
 import android.util.Log
 import com.example.foodyo.dataLayer.remote.dto.cart.AddToCartRequestDto
+import com.example.foodyo.dataLayer.remote.dto.cart.AppErrorResponseDto
 import com.example.foodyo.dataLayer.remote.dto.cart.CartResponseDto
 import com.example.foodyo.dataLayer.remote.dto.cart.UpdateCartRequestDto
 import com.example.foodyo.dataLayer.services.CartApiService
 import com.example.foodyo.domainLayer.repository.CartRepository
 import com.example.foodyo.domainLayer.util.Results
 import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
@@ -48,12 +50,16 @@ class CartRepositoryImpl @Inject constructor(
             } else {
                 Results.Failure(response.message)
             }
-        } catch (e: Exception) {
-           // Log.e("CART_DEBUG", "POST FAILED", e)
-            Results.Failure(
-                e.message ?: "Something went wrong"
-            )
+        } catch (e: ClientRequestException) {
+            Log.d("CART_DEBUG", "Response = ${e.response.status}")
+            val error = e.response.body<AppErrorResponseDto>()
 
+            Results.Failure(error.message)
+
+        } catch (e: Exception) {
+            Log.e("CART_DEBUG", "Error adding tocart: ${e.message}", e )
+            Results.Failure(
+                e.message ?: "Something went wrong")
         }
 
     }
@@ -156,6 +162,29 @@ class CartRepositoryImpl @Inject constructor(
 
         }
 
+    }
+
+    override suspend fun clearCart(): Results<CartResponseDto> {
+
+        return try {
+
+            val response = cartApiService.client
+                .delete("/api/v1/cart")
+                .body<CartResponseDto>()
+
+            if (response.success) {
+                Results.Success(response)
+            } else {
+                Results.Failure(response.message)
+            }
+
+        } catch (e: Exception) {
+
+            Results.Failure(
+                e.message ?: "Something went wrong"
+            )
+
+        }
     }
 
 }

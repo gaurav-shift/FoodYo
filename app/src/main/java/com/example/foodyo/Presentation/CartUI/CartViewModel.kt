@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.foodyo.dataLayer.remote.dto.cart.CartDto
 import com.example.foodyo.dataLayer.remote.dto.cart.CartResponseDto
 import com.example.foodyo.domainLayer.usecase.AddToCartUseCase
+import com.example.foodyo.domainLayer.usecase.ClearCartUseCase
 import com.example.foodyo.domainLayer.usecase.GetCartUseCase
 import com.example.foodyo.domainLayer.usecase.RemoveCartItemUseCase
 import com.example.foodyo.domainLayer.usecase.UpdateCartItemQuantityUseCase
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class CartViewModel @Inject constructor(
     private val addToCartUseCase: AddToCartUseCase,
     private val getCartUseCase: GetCartUseCase,
+    private val clearCartUseCase: ClearCartUseCase,
     private val updateCartItemQuantityUseCase: UpdateCartItemQuantityUseCase,
     private val removeCartItemUseCase: RemoveCartItemUseCase
 ) : ViewModel() {
@@ -118,6 +120,36 @@ class CartViewModel @Inject constructor(
             when (result) {
 
                 is Results.Success -> getCart()
+
+                is Results.Failure -> {
+                    _cartState.value = result
+                }
+
+                else -> {}
+
+            }
+
+        }
+
+    }
+
+    fun clearCart(
+        onSuccess: () -> Unit = {}
+    ) {
+
+        viewModelScope.launch {
+
+            _cartState.value = Results.Loading
+
+            when (val result = clearCartUseCase()) {
+
+                is Results.Success -> {
+
+                    _cart.value = null
+                    _cartState.value = result
+
+                    onSuccess()
+                }
 
                 is Results.Failure -> {
                     _cartState.value = result

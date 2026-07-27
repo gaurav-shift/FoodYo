@@ -1,5 +1,5 @@
 package com.example.foodyo.Presentation.MenuUI
-
+import androidx.compose.material3.AlertDialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,10 +9,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +27,7 @@ import com.example.foodyo.Presentation.MenuUI.Components.RestaurantHeader
 import com.example.foodyo.Presentation.MenuUI.Components.RestaurantInfo
 import com.example.foodyo.Presentation.MenuUI.Components.RestaurantMetaInfo
 import com.example.foodyo.domainLayer.util.Results
+import androidx.compose.runtime.setValue
 
 @Composable
 fun RestaurantDetailsScreen(
@@ -40,6 +43,24 @@ fun RestaurantDetailsScreen(
     val cart by cartViewModel.cart.collectAsState()
     val cartItemsMap = remember(cart) {
         cart?.items?.associateBy { it.menuId } ?: emptyMap()
+    }
+    var showReplaceCartDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var pendingMenuId by remember {
+        mutableStateOf<String?>(null)
+    }
+    val cartState by cartViewModel.cartState.collectAsState()
+
+    LaunchedEffect(cartState) {
+
+        if (cartState is Results.Failure) {
+            val message = (cartState as Results.Failure).message
+            if (message.contains("another restaurant", ignoreCase = true)) {
+                showReplaceCartDialog = true
+            }
+        }
     }
 
     LaunchedEffect(restaurantId) {
@@ -127,6 +148,7 @@ fun RestaurantDetailsScreen(
                             menuItem = menuItem,
                             quantity = quantity,
                             onAddClick = {
+                                pendingMenuId = menuItem.id
                                 cartViewModel.addToCart(
                                     menuItem.id
                                 )
@@ -173,5 +195,44 @@ fun RestaurantDetailsScreen(
                 else -> {}
             }
         }
+    }
+    if (showReplaceCartDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showReplaceCartDialog = false
+            },
+            title = {
+                Text("Replace cart?")
+            },
+            text = {
+                Text(
+                    "Your cart contains items from another restaurant.\n\nDo you want to clear your cart and add this item?"
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showReplaceCartDialog = false
+                        cartViewModel.clearCart {
+                            pendingMenuId?.let {
+                                cartViewModel.addToCart(it)
+                            }
+                        }
+                    }
+                ) {
+                    Text("Replace")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showReplaceCartDialog = false
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+
     }
 }

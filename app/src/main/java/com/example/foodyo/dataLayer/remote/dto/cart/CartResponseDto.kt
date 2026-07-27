@@ -7,5 +7,5 @@ data class CartResponseDto(
     val success: Boolean,
     val message: String,
     val data: CartDto?,
-    val error: CartErrorDto?
+    val error: AppErrorDto?
 )
