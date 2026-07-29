@@ -11,6 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -20,10 +23,6 @@ import com.example.foodyo.Presentation.OrderUI.Components.OrderHeaderCard
 import com.example.foodyo.Presentation.OrderUI.Components.OrderItemsCard
 import com.example.foodyo.Presentation.OrderUI.Components.PaymentDetailsCard
 import com.example.foodyo.domainLayer.util.Results
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 
 @Composable
 fun OrderDetailsScreen(

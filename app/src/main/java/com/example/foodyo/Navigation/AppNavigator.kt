@@ -13,6 +13,7 @@ import com.example.foodyo.Presentation.AuthUI.SignUpScreen
 import com.example.foodyo.Presentation.CartUI.CartScreen
 import com.example.foodyo.Presentation.HomeUI.HomeScreen
 import com.example.foodyo.Presentation.MenuUI.RestaurantDetailsScreen
+import com.example.foodyo.Presentation.OrderUI.MyOrdersScreen
 import com.example.foodyo.Presentation.OrderUI.OrderDetailsScreen
 import com.example.foodyo.Presentation.Splash.SplashScreen
 import com.example.foodyo.dataLayer.remote.dto.address.AddressDto
@@ -109,6 +110,12 @@ fun AppNavigator() {
 
             OrderDetailsScreen(
                 orderId = args.orderId,
+                navController = navController
+            )
+        }
+
+        composable<routes.MyOrders> {
+            MyOrdersScreen(
                 navController = navController
             )
         }
