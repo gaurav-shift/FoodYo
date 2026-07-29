@@ -1,5 +1,6 @@
 package com.example.foodyo.Presentation.CartUI
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodyo.dataLayer.remote.dto.cart.CartDto
@@ -152,6 +153,7 @@ class CartViewModel @Inject constructor(
                 }
 
                 is Results.Failure -> {
+
                     _cartState.value = result
                 }
 

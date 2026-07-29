@@ -1,6 +1,9 @@
 package com.example.foodyo.Presentation.CartUI
 
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,13 +22,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.foodyo.Navigation.routes
 import com.example.foodyo.Presentation.CartUI.Components.CartItemCard
 import com.example.foodyo.Presentation.CartUI.Components.CartPriceDetails
 import com.example.foodyo.Presentation.CartUI.Components.EmptyCart
+import com.example.foodyo.Presentation.OrderUI.Components.AddressBottomSheet
+import com.example.foodyo.Presentation.OrderUI.OrderViewModel
 import com.example.foodyo.domainLayer.util.Results
 
 
@@ -34,20 +45,50 @@ import com.example.foodyo.domainLayer.util.Results
 fun CartScreen(
 
     onBackClick: () -> Unit = {},
-    onCheckoutClick: () -> Unit = {},
-
+    navController: NavController,
+    orderViewModel: OrderViewModel = hiltViewModel(),
     cartViewModel: CartViewModel = hiltViewModel()
 
 ) {
 
     val cartState by cartViewModel.cartState.collectAsState()
+    var showBottomSheet by remember {
+        mutableStateOf(false)
+    }
+    val createOrderState by
+    orderViewModel.createOrderState.collectAsState()
 
     LaunchedEffect(Unit) {
         cartViewModel.getCart()
     }
+    LaunchedEffect(createOrderState) {
+        Log.d("ORDER_FLOW", "State = $createOrderState")
+        when(val state = createOrderState){
+
+            is Results.Success -> {
+                Log.d("ORDER_FLOW", "Create Order Success")
+                cartViewModel.clearCart{
+                    Log.d("ORDER_FLOW", "Clear Cart Callback")
+                    orderViewModel.resetCreateOrderState()
+                navController.navigate(
+                    routes.OrderDetails(
+                        state.data.id
+                    )
+                )
+                }
+
+            }
+            is Results.Failure->{
+                Log.d("ORDER_FLOW", "Failure = ${state.message}")
+                orderViewModel.resetCreateOrderState()
+            }
+
+            else -> {}
+        }
+
+    }
 
     Scaffold(
-
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -55,143 +96,168 @@ fun CartScreen(
                 }
             )
         }
-
     ) { paddingValues ->
+        Box(modifier = Modifier.fillMaxSize()){
+            when (val state = cartState) {
 
-        when (val state = cartState) {
+                Results.Idle -> {}
 
-            Results.Idle -> {}
-
-            Results.Loading -> {
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-
-                    CircularProgressIndicator()
-
-                }
-
-            }
-
-            is Results.Failure -> {
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-
-                    Text(state.message)
-
-                }
-
-            }
-
-            is Results.Success -> {
-
-                val cart = state.data.data
-
-                if (cart == null || cart.items.isEmpty()) {
-
-                    EmptyCart(
-                        onStartShopping = onBackClick
-                    )
-
-                } else {
+                Results.Loading -> {
 
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(paddingValues)
+                            .padding(paddingValues),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
 
-                        LazyColumn(
-                            modifier = Modifier.weight(1f),
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-
-                            item {
-
-                                Text(
-                                    text = cart.restaurantName,
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-
-                            }
-
-                            items(cart.items) { item ->
-
-                                CartItemCard(
-
-                                    item = item,
-
-                                    onIncrement = {
-
-                                        cartViewModel.updateCartItemQuantity(
-                                            menuId = item.menuId,
-                                            quantity = item.quantity + 1
-                                        )
-
-                                    },
-
-                                    onDecrement = {
-
-                                        if (item.quantity == 1) {
-
-                                            cartViewModel.removeCartItem(
-                                                item.menuId
-                                            )
-
-                                        } else {
-
-                                            cartViewModel.updateCartItemQuantity(
-                                                menuId = item.menuId,
-                                                quantity = item.quantity - 1
-                                            )
-
-                                        }
-
-                                    }
-
-                                )
-
-                            }
-
-                            item {
-
-                                CartPriceDetails(cart)
-
-                            }
-
-                        }
-
-                        Button(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            onClick = onCheckoutClick
-                        ) {
-
-                            Text("Proceed to Checkout")
-
-                        }
+                        CircularProgressIndicator()
 
                     }
 
                 }
 
+                is Results.Failure -> {
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+
+                        Text(state.message)
+
+                    }
+
+                }
+
+                is Results.Success -> {
+
+                    val cart = state.data.data
+
+                    if (cart == null || cart.items.isEmpty()) {
+
+                        EmptyCart(
+                            onStartShopping = onBackClick
+                        )
+
+                    } else {
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues)
+                        ) {
+
+                            LazyColumn(
+                                modifier = Modifier.weight(1f),
+                                contentPadding = PaddingValues(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+
+                                item {
+
+                                    Text(
+                                        text = cart.restaurantName,
+                                        style = MaterialTheme.typography.titleLarge
+                                    )
+
+                                }
+
+                                items(cart.items) { item ->
+
+                                    CartItemCard(
+
+                                        item = item,
+
+                                        onIncrement = {
+
+                                            cartViewModel.updateCartItemQuantity(
+                                                menuId = item.menuId,
+                                                quantity = item.quantity + 1
+                                            )
+
+                                        },
+
+                                        onDecrement = {
+
+                                            if (item.quantity == 1) {
+
+                                                cartViewModel.removeCartItem(
+                                                    item.menuId
+                                                )
+
+                                            } else {
+
+                                                cartViewModel.updateCartItemQuantity(
+                                                    menuId = item.menuId,
+                                                    quantity = item.quantity - 1
+                                                )
+
+                                            }
+
+                                        }
+
+                                    )
+
+                                }
+
+                                item {
+                                    CartPriceDetails(cart)
+                                }
+                            }
+                            Button(
+                                enabled = createOrderState !is Results.Loading,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                onClick = { showBottomSheet = true }
+                            ) {
+                                Text("Place Order")
+                            }
+                            if (showBottomSheet) {
+                                AddressBottomSheet(
+                                    onDismiss = {
+                                        showBottomSheet = false
+                                    },
+                                    onAddNewAddress = {
+                                        navController.navigate(routes.CreateAddress)
+                                    },
+                                    onDeliverHere = { addressId ->
+                                        showBottomSheet = false
+                                        orderViewModel.createOrder(addressId)
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            if (createOrderState is Results.Loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.55f)),
+                    contentAlignment = Alignment.Center
+                ){
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator()
+
+                        Text(
+                            text = "Placing your order...",
+                            color = Color.White,
+                            modifier = Modifier.padding(top = 12.dp)
+                        )
+                    }
+                }
             }
 
         }
-
     }
 
 }

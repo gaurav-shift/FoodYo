@@ -13,6 +13,7 @@ import com.example.foodyo.Presentation.AuthUI.SignUpScreen
 import com.example.foodyo.Presentation.CartUI.CartScreen
 import com.example.foodyo.Presentation.HomeUI.HomeScreen
 import com.example.foodyo.Presentation.MenuUI.RestaurantDetailsScreen
+import com.example.foodyo.Presentation.OrderUI.OrderDetailsScreen
 import com.example.foodyo.Presentation.Splash.SplashScreen
 import com.example.foodyo.dataLayer.remote.dto.address.AddressDto
 
@@ -99,9 +100,16 @@ fun AppNavigator() {
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onCheckoutClick = {
-                    // TODO
-                }
+                navController = navController
+            )
+        }
+        composable<routes.OrderDetails> { backStackEntry ->
+
+            val args = backStackEntry.toRoute<routes.OrderDetails>()
+
+            OrderDetailsScreen(
+                orderId = args.orderId,
+                navController = navController
             )
         }
 

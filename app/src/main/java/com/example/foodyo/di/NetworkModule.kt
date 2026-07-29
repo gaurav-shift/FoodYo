@@ -7,16 +7,19 @@ import com.example.foodyo.dataLayer.repositoryImpl.AddressRepositoryImpl
 import com.example.foodyo.dataLayer.repositoryImpl.AuthRepositoryImpl
 import com.example.foodyo.dataLayer.repositoryImpl.CartRepositoryImpl
 import com.example.foodyo.dataLayer.repositoryImpl.MenuRepositoryImpl
+import com.example.foodyo.dataLayer.repositoryImpl.OrderRepositoryImpl
 import com.example.foodyo.dataLayer.repositoryImpl.RestaurantRepositoryImpl
 import com.example.foodyo.dataLayer.services.AddressApiService
 import com.example.foodyo.dataLayer.services.AuthApiService
 import com.example.foodyo.dataLayer.services.CartApiService
 import com.example.foodyo.dataLayer.services.MenuApiService
+import com.example.foodyo.dataLayer.services.OrderApiService
 import com.example.foodyo.dataLayer.services.RestaurantApiService
 import com.example.foodyo.domainLayer.repository.AddressRepository
 import com.example.foodyo.domainLayer.repository.AuthRepository
 import com.example.foodyo.domainLayer.repository.CartRepository
 import com.example.foodyo.domainLayer.repository.MenuRepository
+import com.example.foodyo.domainLayer.repository.OrderRepository
 import com.example.foodyo.domainLayer.repository.RestaurantRepository
 import com.example.foodyo.domainLayer.usecase.ClearCartUseCase
 import dagger.Module
@@ -126,6 +129,26 @@ object NetworkModule {
     fun provideClearCartUseCase(
         repository: CartRepository
     ) = ClearCartUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideOrderApiService(
+        tokenManager: TokenManager
+    ): OrderApiService {
+
+        return OrderApiService(tokenManager)
+
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrderRepository(
+        orderApiService: OrderApiService
+    ): OrderRepository {
+
+        return OrderRepositoryImpl(orderApiService)
+
+    }
 
 
 

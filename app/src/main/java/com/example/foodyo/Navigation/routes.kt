@@ -36,4 +36,14 @@ sealed interface routes {
 
     @Serializable
     data object Cart : routes
+
+    @Serializable
+    data object MyOrders : routes
+
+    @Serializable
+    data class OrderDetails(
+        val orderId: String
+    ) : routes
+
+    
 }
